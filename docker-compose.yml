@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mysql:
     image: mysql:latest
-    container_name: container-dnexpress
+    container_name: DB-MySQL
     environment:
       MYSQL_ROOT_PASSWORD: 'senha-mysql'
       MYSQL_PASSWORD: 'senha-mysql'

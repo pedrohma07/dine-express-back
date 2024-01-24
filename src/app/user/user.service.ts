@@ -13,7 +13,6 @@ export class UserService {
   ) {}
 
   create(createUserDto: CreateUserDto) {
-    console.log(createUserDto);
     this.userRepository.save(createUserDto);
   }
 
@@ -31,5 +30,9 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({ where: { email } });
   }
 }

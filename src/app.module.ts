@@ -4,6 +4,8 @@ import { UserModule } from './app/user/user.module';
 import { User } from './app/user/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
+import { AuthModule } from './app/auth/auth.module';
+import { JwtAuthGuard } from './app/auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -19,12 +21,17 @@ import { APP_PIPE } from '@nestjs/core';
     }),
     ConfigModule.forRoot({ isGlobal: true }), // importando o módulo de configuração para usar variáveis de ambiente
     UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [
     {
       provide: APP_PIPE, // importando o módulo de validação para usar nos controllers
       useClass: ValidationPipe, // usando a classe de validação
+    },
+    {
+      provide: 'APP_GUARD',
+      useClass: JwtAuthGuard,
     },
   ],
 })

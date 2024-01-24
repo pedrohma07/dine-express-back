@@ -1,23 +1,29 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { UserModule } from './app/user/user.module';
-import { User } from './app/user/entities/user.entity';
+import { ConfigModule } from '@nestjs/config';
+import { APP_PIPE } from '@nestjs/core';
+import { AuthModule } from './app/auth/auth.module';
+import { JwtAuthGuard } from './app/auth/guards/jwt-auth.guard';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'senha-mysql',
-      database: 'DineExpress',
-      entities: [User],
-      synchronize: true,
-    }),
+    DatabaseModule,
+    ConfigModule.forRoot({ isGlobal: true }), // importando o módulo de configuração para usar variáveis de ambiente
     UserModule,
+    AuthModule,
+    DatabaseModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_PIPE, // importando o módulo de validação para usar nos controllers
+      useClass: ValidationPipe, // usando a classe de validação
+    },
+    {
+      provide: 'APP_GUARD',
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

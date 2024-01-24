@@ -3,40 +3,59 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { IsPublic } from '../auth/decorators/is-public.decorator';
 
-@Controller('user')
+import * as bcrypt from 'bcrypt';
+
+@Controller('')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @IsPublic()
+  @Post('register')
+  async create(@Body() createUserDto: CreateUserDto) {
+    const userExist = await this.findByEmail(createUserDto.email);
+
+    if (userExist) {
+      return 'Email já cadastrado';
+    }
+    const data = {
+      ...createUserDto,
+      password: await bcrypt.hash(createUserDto.password, 12),
+    };
+
+    return this.userService.create(data);
   }
 
-  @Get()
+  @Get('user')
   findAll() {
-    return 'Hello World!  -  DineExpress';
+    return this.userService.findAll();
   }
 
-  @Get(':id')
+  @Get('user/:id')
   findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+    return this.userService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put('user/:id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+    return this.userService.update(id, updateUserDto);
   }
 
-  @Delete(':id')
+  @Delete('user/:id')
   remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+    return this.userService.remove(id);
+  }
+
+  @Get('user/:email')
+  findByEmail(@Param('email') email: string) {
+    return this.userService.findByEmail(email);
   }
 }

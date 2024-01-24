@@ -4,8 +4,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  BeforeInsert,
 } from 'typeorm';
-import { IsNotEmpty, IsEmail, MinLength } from 'class-validator';
+import { randomUUID } from 'crypto';
 
 @Entity('users')
 export class User {
@@ -13,13 +14,8 @@ export class User {
   id: string;
 
   @Column()
-  @IsNotEmpty({ message: 'O e-mail não pode estar vazio' })
-  @IsEmail({}, { message: 'E-mail inválido' })
   email: string;
 
-  @Column()
-  @IsNotEmpty({ message: 'A senha não pode estar vazia' })
-  @MinLength(6, { message: 'A senha deve ter no mínimo 6 caracteres' })
   password: string;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -31,4 +27,12 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @BeforeInsert()
+  generetedId() {
+    if (this.id) {
+      return;
+    }
+    this.id = randomUUID();
+  }
 }

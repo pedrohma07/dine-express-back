@@ -16,12 +16,14 @@ export class UserService {
     this.userRepository.save(createUserDto);
   }
 
-  // retorna todos os usuários sem a senha
   async findAll() {
     const users = await this.userRepository.find();
     users.map((user) => {
       delete user.password;
     });
+    if (!users) {
+      return 'Nenhum usuário encontrado';
+    }
     return {
       users,
       total: users.length,
@@ -30,6 +32,10 @@ export class UserService {
 
   async findOne(id: string) {
     const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      return 'Nenhum usuário encontrado';
+    }
 
     return {
       ...user,

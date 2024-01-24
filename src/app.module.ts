@@ -6,11 +6,11 @@ import { User } from './app/user/entities/user.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: 'postgres',
       host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'senha-mysql',
+      port: 5432,
+      username: 'pedro',
+      password: 'senha-postgres',
       database: 'DineExpress',
       entities: [User],
       synchronize: true,

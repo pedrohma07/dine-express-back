@@ -1,14 +1,14 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:latest
-    container_name: DB-MySQL
+  postgres:
+    image: postgres:latest
+    container_name: DB-Postgres
     environment:
-      MYSQL_ROOT_PASSWORD: 'senha-mysql'
-      MYSQL_PASSWORD: 'senha-mysql'
-      MYSQL_DATABASE: DineExpress
+      POSTGRES_USER: 'pedro'
+      POSTGRES_PASSWORD: 'senha-postgres'
+      POSTGRES_DB: DineExpress
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - ./mysql_data:/var/lib/mysql
+      - ./postgres_data:/var/lib/postgresql/data

@@ -22,7 +22,7 @@ export class UserController {
 
   @Get()
   findAll() {
-    return 'Hello World!  -  DineExpress';
+    return this.userService.findAll();
   }
 
   @Get(':id')

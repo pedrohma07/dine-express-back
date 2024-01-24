@@ -1,27 +1,18 @@
 import { Module, ValidationPipe } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './app/user/user.module';
-import { User } from './app/user/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
 import { AuthModule } from './app/auth/auth.module';
 import { JwtAuthGuard } from './app/auth/guards/jwt-auth.guard';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'pedro',
-      password: 'senha-postgres',
-      database: 'DineExpress',
-      entities: [User],
-      synchronize: true,
-    }),
+    DatabaseModule,
     ConfigModule.forRoot({ isGlobal: true }), // importando o módulo de configuração para usar variáveis de ambiente
     UserModule,
     AuthModule,
+    DatabaseModule,
   ],
   controllers: [],
   providers: [

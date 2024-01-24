@@ -16,20 +16,54 @@ export class UserService {
     this.userRepository.save(createUserDto);
   }
 
-  findAll() {
-    return `This action returns all user`;
+  // retorna todos os usuários sem a senha
+  async findAll() {
+    const users = await this.userRepository.find();
+    users.map((user) => {
+      delete user.password;
+    });
+    return {
+      users,
+      total: users.length,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    return {
+      ...user,
+      password: undefined,
+    };
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      return 'Usuário não encontrado';
+    }
+
+    const data = {
+      ...user,
+      ...updateUserDto,
+    };
+
+    await this.userRepository.update(id, data);
+
+    return 'Usuário atualizado com sucesso';
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(id: string) {
+    const user = this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      return 'Usuário não encontrado';
+    }
+
+    this.userRepository.delete(id);
+
+    return 'Usuário removido com sucesso';
   }
 
   async findByEmail(email: string): Promise<User> {

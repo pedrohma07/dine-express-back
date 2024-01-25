@@ -4,29 +4,45 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Address } from '../address/entities/address.entity';
+import { CreateAddressDto } from '../address/dto/create-address.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Address)
+    private readonly addressRepository: Repository<Address>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    this.userRepository.save(createUserDto);
+  async create(createUserDto: CreateUserDto) {
+    // Crie uma instância do usuário
+    const user = this.userRepository.create(createUserDto);
+
+    // Crie uma instância do endereço usando o CreateAddressDto
+    const addressDto: CreateAddressDto = createUserDto.address;
+    const address = this.addressRepository.create(addressDto);
+    // Associe o endereço ao usuário
+    user.address = address;
+
+    // Salve o usuário (e o endereço será salvo automaticamente devido à configuração de cascade)
+    await this.userRepository.save(user);
   }
 
   async findAll() {
-    const users = await this.userRepository.find();
-    users.map((user) => {
+    const data = await this.userRepository.find({
+      relations: ['address'],
+    });
+    data.map((user) => {
       delete user.password;
     });
-    if (!users) {
+    if (!data) {
       return 'Nenhum usuário encontrado';
     }
     return {
-      users,
-      total: users.length,
+      data,
+      total: data.length,
     };
   }
 

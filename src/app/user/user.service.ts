@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Address } from '../address/entities/address.entity';
-import { CreateAddressDto } from '../address/dto/create-address.dto';
 
 @Injectable()
 export class UserService {
@@ -17,16 +16,10 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    // Crie uma instância do usuário
     const user = this.userRepository.create(createUserDto);
+    const address = this.addressRepository.create(createUserDto.address);
 
-    // Crie uma instância do endereço usando o CreateAddressDto
-    const addressDto: CreateAddressDto = createUserDto.address;
-    const address = this.addressRepository.create(addressDto);
-    // Associe o endereço ao usuário
-    user.address = address;
-
-    // Salve o usuário (e o endereço será salvo automaticamente devido à configuração de cascade)
+    await this.addressRepository.save(address);
     await this.userRepository.save(user);
   }
 

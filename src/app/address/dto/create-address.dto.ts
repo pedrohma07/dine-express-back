@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, Length, MaxLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateAddressDto {
   @IsString({ message: "O campo 'Rua' deve ser do tipo string" })
@@ -29,6 +35,7 @@ export class CreateAddressDto {
   @IsNotEmpty({ message: "O campo 'Bairro' não pode estar vazio" })
   readonly district: string;
 
+  @IsOptional()
   readonly complement: string;
 
   @IsString({ message: "O campo 'CEP' deve ser do tipo string" })

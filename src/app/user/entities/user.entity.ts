@@ -11,7 +11,7 @@ import {
 import { randomUUID } from 'crypto';
 import { Address } from 'src/app/address/entities/address.entity';
 
-@Entity('users')
+@Entity('user')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;

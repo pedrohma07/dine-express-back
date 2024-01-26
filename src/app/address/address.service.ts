@@ -34,10 +34,13 @@ export class AddressService {
   }
 
   async update(id: string, updateAddressDto: UpdateAddressDto) {
-    const address = this.addressRepository.findOne({ where: { id } });
+    const address = await this.addressRepository.findOne({ where: { id } });
 
     if (!address) {
       return 'Endereço não encontrado';
+    }
+    if (Object.keys(updateAddressDto).length === 0) {
+      return 'Nenhuma alteração foi feita';
     }
 
     const data = {

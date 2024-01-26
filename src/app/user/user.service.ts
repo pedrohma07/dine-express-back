@@ -4,29 +4,38 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Address } from '../address/entities/address.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Address)
+    private readonly addressRepository: Repository<Address>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    this.userRepository.save(createUserDto);
+  async create(createUserDto: CreateUserDto) {
+    const user = this.userRepository.create(createUserDto);
+    const address = this.addressRepository.create(createUserDto.address);
+
+    await this.addressRepository.save(address);
+    await this.userRepository.save(user);
   }
 
   async findAll() {
-    const users = await this.userRepository.find();
-    users.map((user) => {
+    const data = await this.userRepository.find({
+      relations: ['address'],
+    });
+    data.map((user) => {
       delete user.password;
     });
-    if (!users) {
+    if (!data) {
       return 'Nenhum usuário encontrado';
     }
     return {
-      users,
-      total: users.length,
+      data,
+      total: data.length,
     };
   }
 

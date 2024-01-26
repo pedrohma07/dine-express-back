@@ -5,10 +5,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { randomUUID } from 'crypto';
+import { Address } from 'src/app/address/entities/address.entity';
 
-@Entity('users')
+@Entity('user')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -16,13 +19,13 @@ export class User {
   @Column({ nullable: true })
   email: string;
 
-  @Column({ nullable: true })
+  @Column()
   password: string;
 
-  @Column({ nullable: true })
+  @Column()
   name: string;
 
-  @Column({ nullable: true })
+  @Column()
   phoneNumber: string;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -42,4 +45,11 @@ export class User {
     }
     this.id = randomUUID();
   }
+
+  @OneToOne(() => Address, {
+    cascade: true, // Isso permite que as operações de persistência (save, update) afetem também a entidade relacionada (Address).
+    eager: true, // Isso carrega automaticamente a entidade relacionada quando você carrega um User do banco de dados.
+  })
+  @JoinColumn()
+  address: Address;
 }

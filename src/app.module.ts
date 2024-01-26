@@ -5,6 +5,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { AuthModule } from './app/auth/auth.module';
 import { JwtAuthGuard } from './app/auth/guards/jwt-auth.guard';
 import { DatabaseModule } from './database/database.module';
+import { AddressModule } from './app/address/address.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { DatabaseModule } from './database/database.module';
     UserModule,
     AuthModule,
     DatabaseModule,
+    AddressModule,
   ],
   controllers: [],
   providers: [

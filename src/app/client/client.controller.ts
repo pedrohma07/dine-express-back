@@ -66,7 +66,13 @@ export class ClientController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clientService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const isUUID = isUuid(id);
+
+    if (!isUUID) {
+      return 'ID inválido';
+    }
+
+    return await this.clientService.remove(id);
   }
 }

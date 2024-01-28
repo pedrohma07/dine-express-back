@@ -57,6 +57,17 @@ export class ClientService {
     await this.clientRepository.update(id, updateClientDto);
   }
 
+  //clientByemaiç
+  async findByEmail(email: string) {
+    const client = await this.clientRepository.findOne({ where: { email } });
+
+    // if (!client) {
+    //   return 'Cliente não encontrado';
+    // }
+
+    return client;
+  }
+
   async remove(id: string) {
     const client = await this.clientRepository.findOne({ where: { id } });
 

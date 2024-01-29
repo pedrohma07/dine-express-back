@@ -3,13 +3,15 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { UserModule } from 'src/app/user/user.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LoginValidationMiddleware } from './middlewares/login-validation.middleware';
 import * as dotenv from 'dotenv';
+import { ClientModule } from '../client/client.module';
+import { UserModule } from '../user/user.module';
 dotenv.config();
 @Module({
   imports: [
+    ClientModule,
     UserModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,

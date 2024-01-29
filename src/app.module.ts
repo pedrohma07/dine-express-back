@@ -6,6 +6,7 @@ import { AuthModule } from './app/auth/auth.module';
 import { JwtAuthGuard } from './app/auth/guards/jwt-auth.guard';
 import { DatabaseModule } from './database/database.module';
 import { AddressModule } from './app/address/address.module';
+import { ClientModule } from './app/client/client.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AddressModule } from './app/address/address.module';
     AuthModule,
     DatabaseModule,
     AddressModule,
+    ClientModule,
   ],
   controllers: [],
   providers: [

@@ -7,7 +7,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CreateAddressDto } from 'src/app/address/dto/create-address.dto';
+import { CreateAddressDto } from 'src/app/modules/address/dto/create-address.dto';
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'O e-mail não pode estar vazio' })

@@ -49,10 +49,6 @@ export class ClientController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const isUUID = isUuid(id);
-    if (!isUUID) {
-      return 'ID inválido';
-    }
     return await this.clientService.findOne(id);
   }
 

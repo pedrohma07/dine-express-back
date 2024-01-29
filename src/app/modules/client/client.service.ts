@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
 import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { isUuid } from 'src/app/utils/IsUUID';
 
 @Injectable()
 export class ClientService {
@@ -16,61 +17,148 @@ export class ClientService {
   ) {}
 
   async create(createClientDto: CreateClientDto) {
-    const client = this.clientRepository.create(createClientDto);
-    await this.clientRepository.save(client);
+    try {
+      const client = this.clientRepository.create(createClientDto);
+      await this.clientRepository.save(client);
 
-    return createClientDto;
+      delete client.password;
+
+      return {
+        client,
+        message: 'Cliente cadastrado com sucesso',
+        StatusCode: HttpStatus.CREATED,
+      };
+    } catch (error) {
+      throw new HttpException(
+        { message: error.message },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async findAll() {
-    const clients = await this.clientRepository.find();
+    try {
+      const clients = await this.clientRepository.find();
 
-    if (!clients || clients.length === 0) {
-      return 'Nenhum cliente encontrado';
+      if (!clients || clients.length === 0) {
+        throw new HttpException({ message: 'Nenhum cliente encontrado' }, 404);
+      }
+
+      return {
+        total: clients.length,
+        data: clients,
+      };
+    } catch (error) {
+      throw new HttpException(
+        { message: error.message },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-
-    return {
-      total: clients.length,
-      data: clients,
-    };
   }
 
   async findOne(id: string) {
-    const client = await this.clientRepository.findOne({ where: { id } });
+    try {
+      if (!isUuid(id)) {
+        throw new HttpException(
+          { message: 'ID inválido' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
-    if (!client) {
-      return 'Cliente não encontrado';
+      const client = await this.clientRepository.findOne({ where: { id } });
+
+      if (!client) {
+        throw new HttpException(
+          { message: 'Cliente não encontrado' },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      delete client.password;
+
+      return client;
+    } catch (error) {
+      throw new HttpException(
+        { message: error.message },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-
-    delete client.password;
-
-    return client;
   }
 
   async update(id: string, updateClientDto: UpdateClientDto) {
-    const client = await this.clientRepository.findOne({ where: { id } });
+    try {
+      if (!isUuid(id)) {
+        throw new HttpException(
+          { message: 'ID inválido' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
-    if (!client) {
-      return 'Cliente não encontrado';
+      const client = await this.clientRepository.findOne({ where: { id } });
+
+      if (!client) {
+        throw new HttpException(
+          { message: 'Cliente não encontrado' },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      await this.clientRepository.update(id, updateClientDto);
+
+      return {
+        message: 'Cliente atualizado com sucesso',
+        StatusCode: HttpStatus.NO_CONTENT,
+      };
+    } catch (error) {
+      throw new HttpException(
+        { message: error.message },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-
-    await this.clientRepository.update(id, updateClientDto);
   }
 
-  //clientByemaiç
   async findByEmail(email: string) {
-    const client = await this.clientRepository.findOne({ where: { email } });
+    try {
+      const client = await this.clientRepository.findOne({ where: { email } });
 
-    return client;
+      return client;
+    } catch (error) {
+      throw new HttpException(
+        { message: error.message },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async remove(id: string) {
-    const client = await this.clientRepository.findOne({ where: { id } });
+    try {
+      if (!isUuid(id)) {
+        throw new HttpException(
+          { message: 'ID inválido' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
-    if (!client) {
-      throw new NotFoundException(`Client ID ${id} not found`);
-    } else {
-      return await this.clientRepository.remove(client);
+      const client = await this.clientRepository.findOne({ where: { id } });
+
+      if (!client) {
+        throw new HttpException(
+          { message: 'Cliente não encontrado' },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      await this.clientRepository.remove(client);
+
+      return {
+        message: 'Cliente removido com sucesso',
+        StatusCode: HttpStatus.NO_CONTENT,
+      };
+    } catch (error) {
+      throw new HttpException(
+        { message: error.message },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

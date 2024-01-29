@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpException,
+} from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
@@ -7,8 +16,17 @@ import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
-  @Post()
-  create(@Body() createRestaurantDto: CreateRestaurantDto) {
+  @Post('register')
+  async create(@Body() createRestaurantDto: CreateRestaurantDto) {
+    const restaurantExist = await this.restaurantService.findByEmail(
+      createRestaurantDto.email,
+    );
+    console.log(restaurantExist);
+
+    if (restaurantExist && restaurantExist.length > 0) {
+      throw new HttpException('Email já cadastrado', 400);
+    }
+
     return this.restaurantService.create(createRestaurantDto);
   }
 
@@ -23,8 +41,15 @@ export class RestaurantController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRestaurantDto: UpdateRestaurantDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateRestaurantDto: UpdateRestaurantDto,
+  ) {
     return this.restaurantService.update(+id, updateRestaurantDto);
+  }
+
+  async findByEmail(email: string) {
+    return await this.restaurantService.findByEmail(email);
   }
 
   @Delete(':id')

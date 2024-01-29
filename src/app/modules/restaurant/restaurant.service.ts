@@ -1,11 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { Repository } from 'typeorm';
+import { UserService } from '../user/user.service';
+import { Restaurant } from './entities/restaurant.entity';
+import { User } from '../user/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class RestaurantService {
-  create(createRestaurantDto: CreateRestaurantDto) {
-    return 'This action adds a new restaurant';
+  constructor(
+    @InjectRepository(Restaurant)
+    private restaurantRepository: Repository<Restaurant>,
+    @InjectRepository(User)
+    private userService: UserService,
+  ) {}
+
+  async create(createRestaurantDto: CreateRestaurantDto) {
+    const restaurant = this.restaurantRepository.create(createRestaurantDto);
+
+    await this.restaurantRepository.save(restaurant);
+
+    delete restaurant.password;
+
+    return {
+      message: 'Restaurante cadastrado com sucesso',
+      data: restaurant,
+      status: HttpStatus.CREATED,
+    };
   }
 
   findAll() {
@@ -18,6 +40,14 @@ export class RestaurantService {
 
   update(id: number, updateRestaurantDto: UpdateRestaurantDto) {
     return `This action updates a #${id} restaurant`;
+  }
+
+  async findByEmail(email: string) {
+    const restaurant = await this.restaurantRepository.find({
+      where: { email },
+    });
+
+    return restaurant;
   }
 
   remove(id: number) {

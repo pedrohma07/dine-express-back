@@ -76,7 +76,10 @@ export class ClientService {
 
       delete client.password;
 
-      return client;
+      return {
+        client,
+        StatusCode: HttpStatus.OK,
+      };
     } catch (error) {
       throw new HttpException(
         { message: error.message },

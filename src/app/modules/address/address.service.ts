@@ -4,6 +4,7 @@ import { UpdateAddressDto } from './dto/update-address.dto';
 import { Address } from './entities/address.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { isUuid } from 'src/app/utils/IsUUID';
 
 @Injectable()
 export class AddressService {
@@ -18,11 +19,15 @@ export class AddressService {
 
       await this.addressRepository.save(address);
 
-      return { address, message: 'Endereço cadastrado com sucesso' };
+      return {
+        address,
+        message: 'Endereço cadastrado com sucesso',
+        statusCode: HttpStatus.CREATED,
+      };
     } catch (error) {
       throw new HttpException(
         { message: error.message },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
@@ -31,6 +36,13 @@ export class AddressService {
     try {
       const addresses = await this.addressRepository.find();
 
+      if (addresses.length === 0) {
+        throw new HttpException(
+          { message: 'Nenhum endereço encontrado' },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       return {
         total: addresses.length,
         data: addresses,
@@ -38,38 +50,60 @@ export class AddressService {
     } catch (error) {
       throw new HttpException(
         { message: error.message },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
   async findOne(id: string) {
     try {
+      if (!isUuid(id)) {
+        throw new HttpException(
+          { message: 'ID informado não é um UUID válido' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const address = await this.addressRepository.findOne({ where: { id } });
 
-      return address;
+      if (!address) {
+        throw new HttpException(
+          { message: `Endereço referente ao ID: ${id} não encontrado` },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      return {
+        address,
+        statusCode: HttpStatus.OK,
+      };
     } catch (error) {
       throw new HttpException(
         { message: error.message },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
   async update(id: string, updateAddressDto: UpdateAddressDto) {
     try {
+      if (!isUuid(id)) {
+        throw new HttpException(
+          { message: 'ID informado não é um UUID válido' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const address = await this.addressRepository.findOne({ where: { id } });
 
       if (!address) {
         throw new HttpException(
           { message: `Endereço referente ao ID: ${id} não encontrado` },
-          404,
+          HttpStatus.NOT_FOUND,
         );
       }
       if (Object.keys(updateAddressDto).length === 0) {
         throw new HttpException(
           { message: 'Informe os dados para atualização' },
-          400,
+          HttpStatus.BAD_REQUEST,
         );
       }
 
@@ -80,7 +114,10 @@ export class AddressService {
 
       this.addressRepository.update(id, data);
 
-      return 'Endereço atualizado com sucesso';
+      return {
+        message: 'Endereço atualizado com sucesso',
+        statusCode: HttpStatus.NO_CONTENT,
+      };
     } catch (error) {
       throw new HttpException(
         { message: error.message },
@@ -91,22 +128,31 @@ export class AddressService {
 
   async remove(id: string) {
     try {
+      if (!isUuid(id)) {
+        throw new HttpException(
+          { message: 'ID informado não é um UUID válido' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const address = await this.addressRepository.findOne({ where: { id } });
 
       if (!address) {
         throw new HttpException(
           { message: `Endereço referente ao ID: ${id} não encontrado` },
-          404,
+          HttpStatus.NOT_FOUND,
         );
       }
 
       await this.addressRepository.delete(id);
 
-      return 'Endereço removido com sucesso';
+      return {
+        message: 'Endereço removido com sucesso',
+        statusCode: HttpStatus.NO_CONTENT,
+      };
     } catch (error) {
       throw new HttpException(
         { message: error.message },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

@@ -2,9 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { Repository } from 'typeorm';
-import { UserService } from '../user/user.service';
 import { Restaurant } from './entities/restaurant.entity';
-import { User } from '../user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -12,22 +10,30 @@ export class RestaurantService {
   constructor(
     @InjectRepository(Restaurant)
     private restaurantRepository: Repository<Restaurant>,
-    @InjectRepository(User)
-    private userService: UserService,
   ) {}
 
   async create(createRestaurantDto: CreateRestaurantDto) {
-    const restaurant = this.restaurantRepository.create(createRestaurantDto);
+    try {
+      const restaurant = this.restaurantRepository.create(createRestaurantDto);
 
-    await this.restaurantRepository.save(restaurant);
+      if (await this.findByEmail(restaurant.email)) {
+        return {
+          message: 'Email já cadastrado',
+          status: HttpStatus.BAD_REQUEST,
+        };
+      }
 
-    delete restaurant.password;
+      await this.restaurantRepository.save(restaurant);
+      delete restaurant.password;
 
-    return {
-      message: 'Restaurante cadastrado com sucesso',
-      data: restaurant,
-      status: HttpStatus.CREATED,
-    };
+      return {
+        message: 'Restaurante cadastrado com sucesso',
+        data: restaurant,
+        status: HttpStatus.CREATED,
+      };
+    } catch (error) {
+      return { message: error.message, status: HttpStatus.BAD_REQUEST };
+    }
   }
 
   findAll() {

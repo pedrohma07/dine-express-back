@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Client } from '../client/entities/client.entity';
+import { Client } from './entities/client.entity';
 import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
 
@@ -60,10 +60,6 @@ export class ClientService {
   //clientByemaiç
   async findByEmail(email: string) {
     const client = await this.clientRepository.findOne({ where: { email } });
-
-    // if (!client) {
-    //   return 'Cliente não encontrado';
-    // }
 
     return client;
   }

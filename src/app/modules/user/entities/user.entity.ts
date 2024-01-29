@@ -9,7 +9,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { randomUUID } from 'crypto';
-import { Address } from 'src/app/address/entities/address.entity';
+import { Address } from 'src/app/modules/address/entities/address.entity';
 
 @Entity('user')
 export class User {

@@ -7,6 +7,7 @@ import { JwtAuthGuard } from './app/auth/guards/jwt-auth.guard';
 import { DatabaseModule } from './database/database.module';
 import { AddressModule } from './app/address/address.module';
 import { ClientModule } from './app/client/client.module';
+import { RestaurantModule } from './app/restaurant/restaurant.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ClientModule } from './app/client/client.module';
     DatabaseModule,
     AddressModule,
     ClientModule,
+    RestaurantModule,
   ],
   controllers: [],
   providers: [

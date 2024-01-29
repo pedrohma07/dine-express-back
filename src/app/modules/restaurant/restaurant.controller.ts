@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
@@ -23,7 +24,7 @@ export class RestaurantController {
     );
 
     if (restaurantExist) {
-      throw new HttpException('Email já cadastrado', 400);
+      throw new HttpException('Email já cadastrado', HttpStatus.BAD_REQUEST);
     }
 
     return this.restaurantService.create(createRestaurantDto);

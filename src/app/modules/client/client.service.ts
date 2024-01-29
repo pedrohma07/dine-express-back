@@ -3,7 +3,6 @@ import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
-import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { isUuid } from 'src/app/utils/IsUUID';
 
@@ -12,8 +11,6 @@ export class ClientService {
   constructor(
     @InjectRepository(Client)
     private readonly clientRepository: Repository<Client>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createClientDto: CreateClientDto) {
@@ -58,12 +55,7 @@ export class ClientService {
 
   async findOne(id: string) {
     try {
-      if (!isUuid(id)) {
-        throw new HttpException(
-          { message: 'ID inválido' },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      isUuid(id);
 
       const client = await this.clientRepository.findOne({ where: { id } });
 
@@ -90,12 +82,7 @@ export class ClientService {
 
   async update(id: string, updateClientDto: UpdateClientDto) {
     try {
-      if (!isUuid(id)) {
-        throw new HttpException(
-          { message: 'ID inválido' },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      isUuid(id);
 
       const client = await this.clientRepository.findOne({ where: { id } });
 
@@ -135,12 +122,7 @@ export class ClientService {
 
   async remove(id: string) {
     try {
-      if (!isUuid(id)) {
-        throw new HttpException(
-          { message: 'ID inválido' },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      isUuid(id);
 
       const client = await this.clientRepository.findOne({ where: { id } });
 

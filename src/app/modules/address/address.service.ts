@@ -57,12 +57,8 @@ export class AddressService {
 
   async findOne(id: string) {
     try {
-      if (!isUuid(id)) {
-        throw new HttpException(
-          { message: 'ID informado não é um UUID válido' },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      isUuid(id);
+
       const address = await this.addressRepository.findOne({ where: { id } });
 
       if (!address) {
@@ -86,12 +82,7 @@ export class AddressService {
 
   async update(id: string, updateAddressDto: UpdateAddressDto) {
     try {
-      if (!isUuid(id)) {
-        throw new HttpException(
-          { message: 'ID informado não é um UUID válido' },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      isUuid(id);
       const address = await this.addressRepository.findOne({ where: { id } });
 
       if (!address) {
@@ -128,12 +119,7 @@ export class AddressService {
 
   async remove(id: string) {
     try {
-      if (!isUuid(id)) {
-        throw new HttpException(
-          { message: 'ID informado não é um UUID válido' },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      isUuid(id);
       const address = await this.addressRepository.findOne({ where: { id } });
 
       if (!address) {

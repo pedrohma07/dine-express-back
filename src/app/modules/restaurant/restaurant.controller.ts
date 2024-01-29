@@ -21,9 +21,8 @@ export class RestaurantController {
     const restaurantExist = await this.restaurantService.findByEmail(
       createRestaurantDto.email,
     );
-    console.log(restaurantExist);
 
-    if (restaurantExist && restaurantExist.length > 0) {
+    if (restaurantExist) {
       throw new HttpException('Email já cadastrado', 400);
     }
 

@@ -43,7 +43,7 @@ export class RestaurantService {
   }
 
   async findByEmail(email: string) {
-    const restaurant = await this.restaurantRepository.find({
+    const restaurant = await this.restaurantRepository.findOne({
       where: { email },
     });
 

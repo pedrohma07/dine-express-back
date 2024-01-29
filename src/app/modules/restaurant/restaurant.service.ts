@@ -4,6 +4,7 @@ import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { Repository } from 'typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { isUuid } from 'src/app/utils/IsUUID';
 
 @Injectable()
 export class RestaurantService {
@@ -36,16 +37,73 @@ export class RestaurantService {
     }
   }
 
-  findAll() {
-    return `This action returns all restaurant`;
+  async findAll() {
+    try {
+      const restaurants = await this.restaurantRepository.find();
+
+      if (restaurants.length === 0) {
+        return {
+          message: 'Nenhum restaurante encontrado',
+          status: HttpStatus.NOT_FOUND,
+        };
+      }
+
+      return {
+        message: 'Lista de restaurantes',
+        data: restaurants,
+        status: HttpStatus.OK,
+      };
+    } catch (error) {
+      return { message: error.message, status: HttpStatus.BAD_REQUEST };
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} restaurant`;
+  async findOne(id: string) {
+    try {
+      isUuid(id);
+      const restaurant = await this.restaurantRepository.findOne({
+        where: { id },
+      });
+
+      if (!restaurant) {
+        return {
+          message: 'Restaurante não encontrado',
+          status: HttpStatus.NOT_FOUND,
+        };
+      }
+
+      return {
+        data: restaurant,
+        status: HttpStatus.OK,
+      };
+    } catch (error) {
+      return { message: error.message, status: HttpStatus.BAD_REQUEST };
+    }
   }
 
-  update(id: number, updateRestaurantDto: UpdateRestaurantDto) {
-    return `This action updates a #${id} restaurant`;
+  async update(id: string, updateRestaurantDto: UpdateRestaurantDto) {
+    try {
+      isUuid(id);
+      const restaurant = await this.restaurantRepository.findOne({
+        where: { id },
+      });
+
+      if (!restaurant) {
+        return {
+          message: 'Restaurante não encontrado',
+          status: HttpStatus.NOT_FOUND,
+        };
+      }
+
+      await this.restaurantRepository.update(id, updateRestaurantDto);
+
+      return {
+        message: 'Restaurante atualizado com sucesso',
+        status: HttpStatus.OK,
+      };
+    } catch (error) {
+      return { message: error.message, status: HttpStatus.BAD_REQUEST };
+    }
   }
 
   async findByEmail(email: string) {
@@ -56,7 +114,28 @@ export class RestaurantService {
     return restaurant;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} restaurant`;
+  async remove(id: string) {
+    try {
+      isUuid(id);
+      const restaurant = await this.restaurantRepository.findOne({
+        where: { id },
+      });
+
+      if (!restaurant) {
+        return {
+          message: 'Restaurante não encontrado',
+          status: HttpStatus.NOT_FOUND,
+        };
+      }
+
+      await this.restaurantRepository.delete(id);
+
+      return {
+        message: 'Restaurante removido com sucesso',
+        status: HttpStatus.NO_CONTENT,
+      };
+    } catch (error) {
+      return { message: error.message, status: HttpStatus.BAD_REQUEST };
+    }
   }
 }

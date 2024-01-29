@@ -3,9 +3,9 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
@@ -27,15 +27,15 @@ export class RestaurantController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.restaurantService.findOne(+id);
+    return this.restaurantService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateRestaurantDto: UpdateRestaurantDto,
   ) {
-    return this.restaurantService.update(+id, updateRestaurantDto);
+    return this.restaurantService.update(id, updateRestaurantDto);
   }
 
   async findByEmail(email: string) {
@@ -44,6 +44,6 @@ export class RestaurantController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.restaurantService.remove(+id);
+    return this.restaurantService.remove(id);
   }
 }

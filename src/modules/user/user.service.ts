@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Address } from '../address/entities/address.entity';
-import { isUuid } from 'src/app/utils/IsUUID';
+import { isUuid } from 'src/utils/IsUUID';
 
 @Injectable()
 export class UserService {

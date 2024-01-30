@@ -4,7 +4,7 @@ import { UpdateAddressDto } from './dto/update-address.dto';
 import { Address } from './entities/address.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { isUuid } from 'src/app/utils/IsUUID';
+import { isUuid } from 'src/utils/IsUUID';
 
 @Injectable()
 export class AddressService {

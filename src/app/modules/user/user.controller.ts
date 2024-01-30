@@ -10,7 +10,6 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { IsPublic } from '../auth/decorators/is-public.decorator';
 
 import * as bcrypt from 'bcrypt';
 
@@ -18,8 +17,7 @@ import * as bcrypt from 'bcrypt';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @IsPublic()
-  @Post('register')
+  @Post('')
   async create(@Body() createUserDto: CreateUserDto) {
     const userExist = await this.findByEmail(createUserDto.email);
 
@@ -34,27 +32,27 @@ export class UserController {
     return this.userService.create(data);
   }
 
-  @Get('user')
+  @Get()
   findAll() {
     return this.userService.findAll();
   }
 
-  @Get('user/:id')
+  @Get()
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
-  @Put('user/:id')
+  @Put()
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
   }
 
-  @Delete('user/:id')
+  @Delete()
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
   }
 
-  @Get('user/:email')
+  @Get()
   findByEmail(@Param('email') email: string) {
     return this.userService.findByEmail(email);
   }

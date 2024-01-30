@@ -8,11 +8,13 @@ import { LoginValidationMiddleware } from './middlewares/login-validation.middle
 import * as dotenv from 'dotenv';
 import { ClientModule } from '../client/client.module';
 import { UserModule } from '../user/user.module';
+import { RestaurantModule } from '../restaurant/restaurant.module';
 dotenv.config();
 @Module({
   imports: [
     ClientModule,
     UserModule,
+    RestaurantModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },

@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { AuthRequest } from '../models/AuthRequest';
-import { Client } from 'src/app/modules/client/entities/client.entity';
+import { Client } from 'src//modules/client/entities/client.entity';
 import { Restaurant } from '../../restaurant/entities/restaurant.entity';
 
 export const CurrentUser = createParamDecorator(

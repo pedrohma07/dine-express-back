@@ -4,7 +4,7 @@ import { UpdateClientDto } from './dto/update-client.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
 import { Repository } from 'typeorm';
-import { isUuid } from 'src/app/utils/IsUUID';
+import { isUuid } from 'src/utils/IsUUID';
 
 @Injectable()
 export class ClientService {

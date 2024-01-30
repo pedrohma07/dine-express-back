@@ -1,13 +1,13 @@
 import { Module, ValidationPipe } from '@nestjs/common';
-import { UserModule } from './app/modules/user/user.module';
+import { UserModule } from './modules/user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
-import { AuthModule } from './app/modules/auth/auth.module';
-import { JwtAuthGuard } from './app/modules/auth/guards/jwt-auth.guard';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { DatabaseModule } from './database/database.module';
-import { AddressModule } from './app/modules/address/address.module';
-import { ClientModule } from './app/modules/client/client.module';
-import { RestaurantModule } from './app/modules/restaurant/restaurant.module';
+import { AddressModule } from './modules/address/address.module';
+import { ClientModule } from './modules/client/client.module';
+import { RestaurantModule } from './modules/restaurant/restaurant.module';
 
 @Module({
   imports: [

@@ -1,4 +1,4 @@
-import { User } from 'src/app/modules/user/entities/user.entity';
+import { User } from 'src/modules/user/entities/user.entity';
 import { Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('restaurant')

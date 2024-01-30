@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { Repository } from 'typeorm';
@@ -18,10 +18,12 @@ export class RestaurantService {
       const restaurant = this.restaurantRepository.create(createRestaurantDto);
 
       if (await this.findByEmail(restaurant.email)) {
-        return {
-          message: 'Email já cadastrado',
-          status: HttpStatus.BAD_REQUEST,
-        };
+        console.log(await this.findByEmail(restaurant.email));
+
+        throw new HttpException(
+          { message: 'Email já cadastrado' },
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       await this.restaurantRepository.save(restaurant);
@@ -110,6 +112,8 @@ export class RestaurantService {
     const restaurant = await this.restaurantRepository.findOne({
       where: { email },
     });
+
+    console.log(restaurant);
 
     return restaurant;
   }

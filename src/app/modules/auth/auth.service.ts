@@ -1,29 +1,44 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/app/modules/user/entities/user.entity';
 import { UserPayload } from './models/UserPayload';
 import { JwtService } from '@nestjs/jwt';
 import { UserToken } from './models/UserToken';
 import { Client } from '../client/entities/client.entity';
 import { ClientService } from '../client/client.service';
-import { UserService } from '../user/user.service';
+import { Restaurant } from '../restaurant/entities/restaurant.entity';
+import { RestaurantService } from '../restaurant/restaurant.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly clientService: ClientService,
-    private readonly userService: UserService,
+    private readonly restaurantService: RestaurantService,
     private readonly jwtService: JwtService,
   ) {}
 
-  login(user: Client | User): UserToken {
-    //transform user to jwt
+  login(user: Client | Restaurant): UserToken {
+    console.log(user);
+
+    if ('cnpj' in user) {
+      const payload: UserPayload = {
+        sub: user.id,
+        cnpj: user.cnpj,
+        email: user.email,
+      };
+      const jwtToken = this.jwtService.sign(payload);
+
+      return {
+        access_token: jwtToken,
+      };
+    }
+
+    // Se não for um Cliente, assume que é um Restaurante (Restaurant)
     const payload: UserPayload = {
       sub: user.id,
+      cpf: user.cpf,
       email: user.email,
     };
-
     const jwtToken = this.jwtService.sign(payload);
 
     return {
@@ -32,18 +47,19 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string) {
-    const user = await this.userService.findByEmail(email);
+    const restaurant = await this.restaurantService.findByEmail(email);
     const client = await this.clientService.findByEmail(email);
 
-    let isValidUser = false;
+    let isValidRestaurant = false;
     let isValidClient = false;
 
-    if (user) isValidUser = await bcrypt.compare(password, user.password);
+    if (restaurant)
+      isValidRestaurant = await bcrypt.compare(password, restaurant.password);
     if (client) isValidClient = await bcrypt.compare(password, client.password);
 
-    if (isValidUser || isValidClient) {
-      const authenticatedUser = isValidUser
-        ? { ...user, password: undefined }
+    if (isValidRestaurant || isValidClient) {
+      const authenticatedUser = isValidRestaurant
+        ? { ...restaurant, password: undefined }
         : { ...client, password: undefined };
       return authenticatedUser;
     }

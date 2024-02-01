@@ -5,16 +5,31 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
 import { Repository } from 'typeorm';
 import { isUuid } from 'src/utils/IsUUID';
+import EmailChecker from 'src/utils/validateEmailExist';
 
 @Injectable()
 export class ClientService {
   constructor(
     @InjectRepository(Client)
     private readonly clientRepository: Repository<Client>,
+    private readonly emailChecker: EmailChecker,
   ) {}
 
   async create(createClientDto: CreateClientDto) {
     try {
+      const emailExists = await this.emailChecker.checkEmailExists(
+        createClientDto.email,
+      );
+      const cpfExists = await this.findByCpf(createClientDto.cpf);
+
+      if (cpfExists) {
+        throw new HttpException('CPF já cadastrado', HttpStatus.BAD_REQUEST);
+      }
+
+      if (emailExists) {
+        throw new HttpException('Email já cadastrado', HttpStatus.BAD_REQUEST);
+      }
+
       const client = this.clientRepository.create(createClientDto);
       await this.clientRepository.save(client);
 
@@ -110,6 +125,19 @@ export class ClientService {
   async findByEmail(email: string) {
     try {
       const client = await this.clientRepository.findOne({ where: { email } });
+
+      return client;
+    } catch (error) {
+      throw new HttpException(
+        { message: error.message },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async findByCpf(cpf: string) {
+    try {
+      const client = await this.clientRepository.findOne({ where: { cpf } });
 
       return client;
     } catch (error) {

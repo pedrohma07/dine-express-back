@@ -6,39 +6,24 @@ import {
   Param,
   Delete,
   Put,
-  HttpException,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
-import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 import { IsPublic } from '../auth/decorators/is-public.decorator';
 
 @Controller('client')
 export class ClientController {
-  constructor(
-    private readonly clientService: ClientService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly clientService: ClientService) {}
 
   @IsPublic()
   @Post('register')
   async create(@Body() createClientDto: CreateClientDto) {
-    const userExist = await this.clientService.findByEmail(
-      createClientDto.email,
-    );
+    const hashedPassword = await bcrypt.hash(createClientDto.password, 12);
+    const client = { ...createClientDto, password: hashedPassword };
 
-    if (userExist) {
-      throw new HttpException('Email já cadastrado', 400);
-    }
-
-    const data = {
-      ...createClientDto,
-      password: await bcrypt.hash(createClientDto.password, 12),
-    };
-
-    return this.clientService.create(data);
+    return this.clientService.create(client);
   }
 
   @Get()

@@ -6,27 +6,20 @@ import {
   Param,
   Delete,
   Put,
-  HttpException,
 } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import * as bcrypt from 'bcrypt';
+import { IsPublic } from '../auth/decorators/is-public.decorator';
 
 @Controller('restaurant')
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
+  @IsPublic()
   @Post('register')
   async create(@Body() createRestaurantDto: CreateRestaurantDto) {
-    const restaurantExist = await this.restaurantService.findByEmail(
-      createRestaurantDto.email,
-    );
-
-    if (restaurantExist) {
-      throw new HttpException('Email já cadastrado', 400);
-    }
-
     const data = {
       ...createRestaurantDto,
       password: await bcrypt.hash(createRestaurantDto.password, 12),

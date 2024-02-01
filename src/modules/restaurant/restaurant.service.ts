@@ -5,26 +5,33 @@ import { Repository } from 'typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { isUuid } from 'src/utils/IsUUID';
+import { Client } from '../client/entities/client.entity';
 
 @Injectable()
 export class RestaurantService {
   constructor(
     @InjectRepository(Restaurant)
-    private restaurantRepository: Repository<Restaurant>,
+    private readonly restaurantRepository: Repository<Restaurant>,
+    @InjectRepository(Client)
+    private readonly clientRepository: Repository<Client>,
   ) {}
 
   async create(createRestaurantDto: CreateRestaurantDto) {
     try {
-      const restaurant = this.restaurantRepository.create(createRestaurantDto);
+      const emailExists = await this.checkEmailExists(
+        createRestaurantDto.email,
+      );
+      const cnpjExists = await this.findByCnpj(createRestaurantDto.cnpj);
 
-      if (await this.findByEmail(restaurant.email)) {
-        console.log(await this.findByEmail(restaurant.email));
-
-        throw new HttpException(
-          { message: 'Email já cadastrado' },
-          HttpStatus.BAD_REQUEST,
-        );
+      if (cnpjExists) {
+        throw new HttpException('CNPJ já cadastrado', HttpStatus.BAD_REQUEST);
       }
+
+      if (emailExists) {
+        throw new HttpException('Email já cadastrado', HttpStatus.BAD_REQUEST);
+      }
+
+      const restaurant = this.restaurantRepository.create(createRestaurantDto);
 
       await this.restaurantRepository.save(restaurant);
       delete restaurant.password;
@@ -113,7 +120,13 @@ export class RestaurantService {
       where: { email },
     });
 
-    console.log(restaurant);
+    return restaurant;
+  }
+
+  async findByCnpj(cnpj: string) {
+    const restaurant = await this.restaurantRepository.findOne({
+      where: { cnpj },
+    });
 
     return restaurant;
   }
@@ -141,5 +154,14 @@ export class RestaurantService {
     } catch (error) {
       return { message: error.message, status: HttpStatus.BAD_REQUEST };
     }
+  }
+
+  async checkEmailExists(email: string): Promise<boolean> {
+    const client = await this.clientRepository.findOne({ where: { email } });
+    console.log(client);
+
+    const restaurant = await this.findByEmail(email);
+
+    return client !== null || restaurant !== null;
   }
 }

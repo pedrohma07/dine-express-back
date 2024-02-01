@@ -5,19 +5,20 @@ import { Repository } from 'typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { isUuid } from 'src/utils/IsUUID';
-import EmailChecker from 'src/utils/validateEmailExist';
+import { Client } from '../client/entities/client.entity';
 
 @Injectable()
 export class RestaurantService {
   constructor(
     @InjectRepository(Restaurant)
     private readonly restaurantRepository: Repository<Restaurant>,
-    private readonly emailChecker: EmailChecker,
+    @InjectRepository(Client)
+    private readonly clientRepository: Repository<Client>,
   ) {}
 
   async create(createRestaurantDto: CreateRestaurantDto) {
     try {
-      const emailExists = await this.emailChecker.checkEmailExists(
+      const emailExists = await this.checkEmailExists(
         createRestaurantDto.email,
       );
       const cnpjExists = await this.findByCnpj(createRestaurantDto.cnpj);
@@ -153,5 +154,14 @@ export class RestaurantService {
     } catch (error) {
       return { message: error.message, status: HttpStatus.BAD_REQUEST };
     }
+  }
+
+  async checkEmailExists(email: string): Promise<boolean> {
+    const client = await this.clientRepository.findOne({ where: { email } });
+    console.log(client);
+
+    const restaurant = await this.findByEmail(email);
+
+    return client !== null || restaurant !== null;
   }
 }

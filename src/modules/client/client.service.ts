@@ -5,21 +5,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
 import { Repository } from 'typeorm';
 import { isUuid } from 'src/utils/IsUUID';
-import EmailChecker from 'src/utils/validateEmailExist';
+import { Restaurant } from '../restaurant/entities/restaurant.entity';
 
 @Injectable()
 export class ClientService {
   constructor(
     @InjectRepository(Client)
     private readonly clientRepository: Repository<Client>,
-    private readonly emailChecker: EmailChecker,
+    @InjectRepository(Restaurant)
+    private readonly restaurantRepository: Repository<Restaurant>,
   ) {}
 
   async create(createClientDto: CreateClientDto) {
     try {
-      const emailExists = await this.emailChecker.checkEmailExists(
-        createClientDto.email,
-      );
+      const emailExists = await this.checkEmailExists(createClientDto.email);
       const cpfExists = await this.findByCpf(createClientDto.cpf);
 
       if (cpfExists) {
@@ -27,7 +26,7 @@ export class ClientService {
       }
 
       if (emailExists) {
-        throw new HttpException('Email já cadastrado', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Email em uso', HttpStatus.BAD_REQUEST);
       }
 
       const client = this.clientRepository.create(createClientDto);
@@ -173,5 +172,15 @@ export class ClientService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async checkEmailExists(email: string): Promise<boolean> {
+    const client = await this.findByEmail(email);
+
+    const restaurant = await this.restaurantRepository.findOne({
+      where: { email },
+    });
+
+    return client !== null || restaurant !== null;
   }
 }

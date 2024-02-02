@@ -18,12 +18,11 @@ export class AuthService {
   ) {}
 
   login(user: Client | Restaurant): UserToken {
-    console.log(user);
-
     if ('cnpj' in user) {
       const payload: UserPayload = {
         sub: user.id,
         cnpj: user.cnpj,
+        role: user.role,
         email: user.email,
       };
       const jwtToken = this.jwtService.sign(payload);
@@ -37,6 +36,7 @@ export class AuthService {
     const payload: UserPayload = {
       sub: user.id,
       cpf: user.cpf,
+      role: user.role,
       email: user.email,
     };
     const jwtToken = this.jwtService.sign(payload);

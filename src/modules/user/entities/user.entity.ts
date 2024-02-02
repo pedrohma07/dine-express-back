@@ -28,6 +28,9 @@ export class User {
   @Column()
   phoneNumber: string;
 
+  @Column({ type: 'enum', enum: ['admin', 'manager', 'client', 'attendant'] })
+  role: string;
+
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 

@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateAddressDto } from 'src/modules/address/dto/create-address.dto';
+import { Roles } from 'src/enums/roles';
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'O e-mail não pode estar vazio' })
@@ -22,8 +23,13 @@ export class CreateUserDto {
   @MaxLength(100, { message: 'O nome deve ter no máximo 100 caracteres' })
   readonly name: string;
 
+  @IsNotEmpty({ message: 'O papel não pode estar vazio' })
+  readonly role: Roles;
+
   @IsNotEmpty({ message: 'O telefone não pode estar vazio' })
-  @IsPhoneNumber('BR', { message: 'Número de telefone inválido' }) // padrao brasileiro ex:  82999999999
+  @IsPhoneNumber('BR', {
+    message: 'Número de telefone inválido, deve conter 11 dígitos sem pontos',
+  }) // padrao brasileiro ex:  82999999999
   readonly phoneNumber: string;
 
   @IsNotEmpty({ message: 'O endereço não pode estar vazio' })

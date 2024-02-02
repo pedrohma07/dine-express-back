@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty, Length } from 'class-validator';
 import { IsCNPJ } from 'src/decorators/IsCNPJ';
-import { Roles } from 'src/enums/roles';
+import { RolesRestaurant } from 'src/enums/roles';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 
 export class CreateRestaurantDto extends CreateUserDto {
@@ -9,6 +9,6 @@ export class CreateRestaurantDto extends CreateUserDto {
   cnpj: string;
 
   @IsNotEmpty({ message: 'O papel não pode estar vazio' })
-  @IsEnum(Roles, { message: 'Papel inválido' })
-  readonly role: Roles;
+  @IsEnum(RolesRestaurant, { message: 'Papel inválido' })
+  readonly role: RolesRestaurant;
 }

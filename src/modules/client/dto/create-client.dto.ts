@@ -1,5 +1,6 @@
 import { IsEnum, IsNotEmpty, Length } from 'class-validator';
 import { IsCPF } from 'src/decorators/IsCPF';
+import { RolesClient } from 'src/enums/roles';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 
 export class CreateClientDto extends CreateUserDto {
@@ -7,8 +8,7 @@ export class CreateClientDto extends CreateUserDto {
   @IsCPF()
   readonly cpf: string;
 
-  // valida se o campo role é vazio e se é igual a 'client'
   @IsNotEmpty({ message: 'O papel não pode estar vazio' })
-  @IsEnum({ CLIENT: 'client' }, { message: 'Papel inválido' })
+  @IsEnum(RolesClient, { message: 'Papel inválido' })
   readonly role = 'client';
 }

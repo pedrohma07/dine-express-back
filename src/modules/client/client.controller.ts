@@ -12,6 +12,8 @@ import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import * as bcrypt from 'bcrypt';
 import { IsPublic } from '../auth/decorators/is-public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesClient } from 'src/enums/roles.enum';
 
 @Controller('client')
 export class ClientController {
@@ -37,6 +39,7 @@ export class ClientController {
   }
 
   @Put(':id')
+  @Roles(RolesClient.CLIENT)
   async update(
     @Param('id') id: string,
     @Body() updateClientDto: UpdateClientDto,

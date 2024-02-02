@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty, Length } from 'class-validator';
 import { IsCPF } from 'src/decorators/IsCPF';
-import { RolesClient } from 'src/enums/roles';
+import { RolesClient } from 'src/enums/roles.enum';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 
 export class CreateClientDto extends CreateUserDto {

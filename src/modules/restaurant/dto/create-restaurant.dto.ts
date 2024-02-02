@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty, Length } from 'class-validator';
 import { IsCNPJ } from 'src/decorators/IsCNPJ';
-import { RolesRestaurant } from 'src/enums/roles';
+import { RolesRestaurant } from 'src/enums/roles.enum';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 
 export class CreateRestaurantDto extends CreateUserDto {

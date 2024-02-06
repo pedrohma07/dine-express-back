@@ -15,9 +15,10 @@ import { IsPublic } from '../auth/decorators/is-public.decorator';
 // import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesRestaurant } from 'src/enums/roles.enum';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('restaurant')
-@Roles(RolesRestaurant.ADMIN)
+@ApiTags('restaurant')
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
@@ -38,6 +39,7 @@ export class RestaurantController {
   }
 
   @Get(':id')
+  @Roles(RolesRestaurant.ADMIN)
   @Roles(
     RolesRestaurant.ADMIN ||
       RolesRestaurant.MANEGER ||

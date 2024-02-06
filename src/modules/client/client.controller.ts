@@ -48,6 +48,7 @@ export class ClientController {
   }
 
   @Delete(':id')
+  @Roles(RolesClient.CLIENT)
   async remove(@Param('id') id: string) {
     return await this.clientService.remove(id);
   }

@@ -38,11 +38,17 @@ export class RestaurantController {
   }
 
   @Get(':id')
+  @Roles(
+    RolesRestaurant.ADMIN ||
+      RolesRestaurant.MANEGER ||
+      RolesRestaurant.ATTENDANT,
+  )
   findOne(@Param('id') id: string) {
     return this.restaurantService.findOne(id);
   }
 
   @Put(':id')
+  @Roles(RolesRestaurant.ADMIN)
   update(
     @Param('id') id: string,
     @Body() updateRestaurantDto: UpdateRestaurantDto,
@@ -55,6 +61,7 @@ export class RestaurantController {
   }
 
   @Delete(':id')
+  @Roles(RolesRestaurant.ADMIN)
   remove(@Param('id') id: string) {
     return this.restaurantService.remove(id);
   }

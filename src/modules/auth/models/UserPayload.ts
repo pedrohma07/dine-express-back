@@ -3,6 +3,7 @@ export interface UserPayload {
   email: string;
   cpf?: string;
   cnpj?: string;
+  role: string;
   iat?: number;
   exp?: number;
 }

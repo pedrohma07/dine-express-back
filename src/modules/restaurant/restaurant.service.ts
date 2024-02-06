@@ -158,7 +158,6 @@ export class RestaurantService {
 
   async checkEmailExists(email: string): Promise<boolean> {
     const client = await this.clientRepository.findOne({ where: { email } });
-    console.log(client);
 
     const restaurant = await this.findByEmail(email);
 

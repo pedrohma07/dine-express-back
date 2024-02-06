@@ -23,7 +23,9 @@ export class CreateUserDto {
   readonly name: string;
 
   @IsNotEmpty({ message: 'O telefone não pode estar vazio' })
-  @IsPhoneNumber('BR', { message: 'Número de telefone inválido' }) // padrao brasileiro ex:  82999999999
+  @IsPhoneNumber('BR', {
+    message: 'Número de telefone inválido, deve conter 11 dígitos sem pontos',
+  }) // padrao brasileiro ex:  82999999999
   readonly phoneNumber: string;
 
   @IsNotEmpty({ message: 'O endereço não pode estar vazio' })

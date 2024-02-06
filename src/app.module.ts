@@ -8,6 +8,8 @@ import { DatabaseModule } from './database/database.module';
 import { AddressModule } from './modules/address/address.module';
 import { ClientModule } from './modules/client/client.module';
 import { RestaurantModule } from './modules/restaurant/restaurant.module';
+import { RolesGuard } from './modules/auth/guards/roles.guard';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { RestaurantModule } from './modules/restaurant/restaurant.module';
     AddressModule,
     ClientModule,
     RestaurantModule,
+    JwtModule,
   ],
   controllers: [],
   providers: [
@@ -28,7 +31,11 @@ import { RestaurantModule } from './modules/restaurant/restaurant.module';
     },
     {
       provide: 'APP_GUARD',
-      useClass: JwtAuthGuard,
+      useClass: JwtAuthGuard, // change the value to an instance of JwtAuthGuard
+    },
+    {
+      provide: 'APP_GUARD',
+      useClass: RolesGuard, // change the value to an instance of RolesGuard
     },
   ],
 })

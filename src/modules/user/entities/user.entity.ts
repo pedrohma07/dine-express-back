@@ -10,15 +10,18 @@ import {
 } from 'typeorm';
 import { randomUUID } from 'crypto';
 import { Address } from 'src/modules/address/entities/address.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('user')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ApiProperty()
   @Column({ nullable: true, unique: true })
   email: string;
 
+  @ApiProperty()
   @Column()
   password: string;
 

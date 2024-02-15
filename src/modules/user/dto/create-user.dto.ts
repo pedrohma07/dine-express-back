@@ -14,7 +14,7 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'O e-mail não pode estar vazio' })
   @IsEmail({}, { message: 'E-mail inválido' })
   @ApiProperty({
-    example: 'example@gamil.com',
+    example: 'example@gmail.com',
     description: 'E-mail do usuário',
   })
   readonly email: string;

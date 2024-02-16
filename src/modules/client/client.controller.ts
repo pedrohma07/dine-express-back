@@ -16,7 +16,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesClient } from 'src/enums/roles.enum';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@Controller('client')
+@Controller('clients')
 @ApiTags('client')
 export class ClientController {
   constructor(private readonly clientService: ClientService) {}

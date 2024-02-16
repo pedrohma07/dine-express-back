@@ -17,7 +17,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesRestaurant } from 'src/enums/roles.enum';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@Controller('restaurant')
+@Controller('restaurants')
 @ApiTags('restaurant')
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}

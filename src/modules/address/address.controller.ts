@@ -11,7 +11,7 @@ import { AddressService } from './address.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { IsPublic } from '../auth/decorators/is-public.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('address')
 @ApiTags('address')
@@ -25,21 +25,25 @@ export class AddressController {
   }
 
   @Get()
+  @ApiBearerAuth()
   findAll() {
     return this.addressService.findAll();
   }
 
   @Get(':id')
+  @ApiBearerAuth()
   findOne(@Param('id') id: string) {
     return this.addressService.findOne(id);
   }
 
   @Put(':id')
+  @ApiBearerAuth()
   update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
     return this.addressService.update(id, updateAddressDto);
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   remove(@Param('id') id: string) {
     return this.addressService.remove(id);
   }

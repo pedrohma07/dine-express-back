@@ -14,7 +14,7 @@ import * as bcrypt from 'bcrypt';
 import { IsPublic } from '../auth/decorators/is-public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesClient } from 'src/enums/roles.enum';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('client')
 @ApiTags('client')
@@ -31,16 +31,19 @@ export class ClientController {
   }
 
   @Get()
+  @ApiBearerAuth()
   async findAll() {
     return await this.clientService.findAll();
   }
 
   @Get(':id')
+  @ApiBearerAuth()
   async findOne(@Param('id') id: string) {
     return await this.clientService.findOne(id);
   }
 
   @Put(':id')
+  @ApiBearerAuth()
   @Roles(RolesClient.CLIENT)
   async update(
     @Param('id') id: string,
@@ -50,6 +53,7 @@ export class ClientController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   @Roles(RolesClient.CLIENT)
   async remove(@Param('id') id: string) {
     return await this.clientService.remove(id);

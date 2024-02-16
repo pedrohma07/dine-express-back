@@ -10,6 +10,7 @@ async function bootstrap() {
     .setTitle('Documentação Swagger - DineExpress')
     .setDescription('Documentação da API do DineExpress')
     .setVersion('1.0')
+    .addBearerAuth()
     .addTag('users')
     .build();
 

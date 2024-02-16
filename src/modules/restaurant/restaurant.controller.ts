@@ -15,9 +15,10 @@ import { IsPublic } from '../auth/decorators/is-public.decorator';
 // import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesRestaurant } from 'src/enums/roles.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@Controller('restaurant')
-@Roles(RolesRestaurant.ADMIN)
+@Controller('restaurants')
+@ApiTags('restaurant')
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
@@ -33,16 +34,26 @@ export class RestaurantController {
   }
 
   @Get()
+  @ApiBearerAuth()
   findAll() {
     return this.restaurantService.findAll();
   }
 
   @Get(':id')
+  @ApiBearerAuth()
+  @Roles(RolesRestaurant.ADMIN)
+  @Roles(
+    RolesRestaurant.ADMIN ||
+      RolesRestaurant.MANEGER ||
+      RolesRestaurant.ATTENDANT,
+  )
   findOne(@Param('id') id: string) {
     return this.restaurantService.findOne(id);
   }
 
   @Put(':id')
+  @ApiBearerAuth()
+  @Roles(RolesRestaurant.ADMIN)
   update(
     @Param('id') id: string,
     @Body() updateRestaurantDto: UpdateRestaurantDto,
@@ -55,6 +66,8 @@ export class RestaurantController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @Roles(RolesRestaurant.ADMIN)
   remove(@Param('id') id: string) {
     return this.restaurantService.remove(id);
   }

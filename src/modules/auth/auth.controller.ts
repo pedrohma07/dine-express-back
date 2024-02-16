@@ -11,6 +11,14 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthRequest } from './models/AuthRequest';
 import { IsPublic } from './decorators/is-public.decorator';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { LoginRequestBody } from './models/LoginRequestBody';
 
 @Controller()
 export class AuthController {
@@ -18,13 +26,20 @@ export class AuthController {
 
   @IsPublic()
   @Post('login')
+  @ApiTags('auth')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Efetua o login do usuário.' })
+  @ApiBody({
+    type: LoginRequestBody,
+  })
+  @ApiResponse({ status: 200, description: 'Login realizado com sucesso.' })
   @UseGuards(LocalAuthGuard)
   login(@Request() req: AuthRequest) {
     return this.authService.login(req.user);
   }
 
   @Post('verify-token')
+  @ApiBearerAuth()
   async verifyToken(@Req() request: Request) {
     const token = request.headers['authorization'].split(' ')[1];
 

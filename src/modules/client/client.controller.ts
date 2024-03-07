@@ -20,6 +20,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 @ApiTags('client')
 export class ClientController {
   constructor(private readonly clientService: ClientService) {}
+  
   @IsPublic()
   @Post('register')
   async create(@Body() createClientDto: CreateClientDto) {
